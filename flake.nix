@@ -15,10 +15,10 @@
     {
       devShells = forAllSystems ({ pkgs }: {
         default = pkgs.mkShell {
-          packages = [
-            pkgs.git
-            pkgs.gh
-            pkgs.bun
+          packages = with pkgs; [
+            git
+            gh
+            bun
           ];
         };
       });

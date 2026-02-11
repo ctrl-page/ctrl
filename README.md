@@ -4,7 +4,11 @@ A TypeScript monorepo by [ctrl-page](https://github.com/ctrl-page).
 
 ## Prerequisites
 
-- [Nix](https://nixos.org/) with flakes enabled
+Install [Nix](https://nixos.org/) via the [Determinate Systems installer](https://determinate.systems/nix-installer/) (flakes enabled by default):
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+```
 
 ## Getting Started
 
