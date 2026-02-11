@@ -9,12 +9,9 @@ This file provides context for Claude Code when working in this repository.
 ## Language & Runtime
 
 - **Language:** TypeScript
-- **Runtime:** Node.js
+- **Runtime:** Bun
 
-## Conventions
+## Infrastructure
 
-- Use TypeScript for all source code
-- Use strict TypeScript configuration (`strict: true`)
-- Prefer `const` over `let`; avoid `var`
-- Use ES modules (`import`/`export`)
-- Use camelCase for variables and functions, PascalCase for types and classes
+- **Nix** via `flake.nix` — use `nix develop` to enter the dev shell
+- Dev shell provides: `git`, `gh` (GitHub CLI), `bun`

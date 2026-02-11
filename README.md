@@ -2,9 +2,17 @@
 
 A TypeScript monorepo by [ctrl-page](https://github.com/ctrl-page).
 
+## Prerequisites
+
+- [Nix](https://nixos.org/) with flakes enabled
+
 ## Getting Started
 
-This project is under active development. More details will be added as the project evolves.
+```sh
+nix develop
+```
+
+This drops you into a dev shell with `git`, `gh`, and `bun`.
 
 ## License
 
