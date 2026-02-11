@@ -5,7 +5,6 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Install Nix if not present (Determinate Systems installer, non-interactive)
 if ! command -v nix &>/dev/null; then
-  echo "Installing Nix..."
   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
   . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
@@ -18,10 +17,4 @@ if [ "$KERNEL_MAJOR" -lt 5 ] 2>/dev/null; then
 fi
 
 # Install dev environment from flake
-echo "Installing dev environment..."
 nix profile install "$REPO_DIR#dev-env" "${NIX_OPTS[@]}"
-
-echo "Setup complete. Available tools:"
-echo "  git: $(git --version)"
-echo "  gh:  $(gh --version | head -1)"
-echo "  bun: $(bun --version)"
