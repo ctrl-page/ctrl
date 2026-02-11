@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Install Nix if not present (Determinate Systems installer, non-interactive)
+if ! command -v nix &>/dev/null; then
+  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
+  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+fi
+
+# Disable sandbox on old kernels (e.g. Claude Code containers run kernel 4.4.0)
+NIX_OPTS=()
+KERNEL_MAJOR="$(uname -r | cut -d. -f1)"
+if [ "$KERNEL_MAJOR" -lt 5 ] 2>/dev/null; then
+  NIX_OPTS+=(--option sandbox false)
+fi
+
+# Install dev environment from flake
+nix profile install "$REPO_DIR#dev-env" "${NIX_OPTS[@]}"
