@@ -2,21 +2,19 @@
 
 A TypeScript monorepo by [ctrl-page](https://github.com/ctrl-page).
 
-## Prerequisites
-
-Install [Nix](https://nixos.org/) via the [Determinate Systems installer](https://determinate.systems/nix-installer/) (flakes enabled by default):
+## Getting Started
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+.scripts/setup
 ```
 
-## Getting Started
+This installs [Nix](https://nixos.org/) (via the [Determinate Systems installer](https://determinate.systems/nix-installer/)) and all dev dependencies (`git`, `gh`, `bun`) from `flake.nix`.
+
+For an interactive dev shell:
 
 ```sh
 nix develop
 ```
-
-This drops you into a dev shell with `git`, `gh`, and `bun`.
 
 ## License
 
