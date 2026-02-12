@@ -1,0 +1,3 @@
+version: 0.1.0
+patterns:
+  - file: patterns/no_nested_dependencies.md

@@ -3,18 +3,45 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-# Install Nix if not present (Determinate Systems installer, non-interactive)
+# ---------------------------------------------------------------------------
+# 1. Ensure Nix is installed and on PATH
+# ---------------------------------------------------------------------------
 if ! command -v nix &>/dev/null; then
-  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
-  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  if [ -f /nix/receipt.json ]; then
+    # Nix was installed previously but isn't on PATH — source the profile
+    NIX_SH="$(find /nix/store -maxdepth 2 -name nix-daemon.sh -path '*/etc/profile.d/*' 2>/dev/null | head -n1)"
+    if [ -n "$NIX_SH" ]; then
+      . "$NIX_SH"
+    else
+      # Fallback: put the store nix binary on PATH directly
+      NIX_BIN="$(find /nix/store -maxdepth 2 -name nix -path '*/bin/nix' -type f 2>/dev/null | head -n1)"
+      export PATH="$(dirname "$NIX_BIN"):$PATH"
+    fi
+  else
+    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix \
+      | sh -s -- install --no-confirm
+    # After fresh install the default profile should exist
+    if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+      . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    else
+      NIX_SH="$(find /nix/store -maxdepth 2 -name nix-daemon.sh -path '*/etc/profile.d/*' 2>/dev/null | head -n1)"
+      [ -n "$NIX_SH" ] && . "$NIX_SH"
+    fi
+  fi
 fi
 
-# Disable sandbox on old kernels (e.g. Claude Code containers run kernel 4.4.0)
+# ---------------------------------------------------------------------------
+# 2. Disable sandbox on old kernels (e.g. Claude Code containers run 4.4.0)
+# ---------------------------------------------------------------------------
 NIX_OPTS=()
 KERNEL_MAJOR="$(uname -r | cut -d. -f1)"
 if [ "$KERNEL_MAJOR" -lt 5 ] 2>/dev/null; then
   NIX_OPTS+=(--option sandbox false)
 fi
 
-# Install dev environment from flake
-nix profile install "$REPO_DIR#dev-env" "${NIX_OPTS[@]}"
+# ---------------------------------------------------------------------------
+# 3. Install dev environment from flake (skip if already present)
+# ---------------------------------------------------------------------------
+if ! command -v bun &>/dev/null || ! command -v gh &>/dev/null; then
+  nix profile install "$REPO_DIR#dev-env" "${NIX_OPTS[@]}"
+fi
